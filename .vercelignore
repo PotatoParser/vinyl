@@ -1,6 +1,6 @@
 node_modules
 public/scripts
 public/styles/*
-!public/styles/all.min.css	
+!public/styles/all.min.css
 .env
 .vercel

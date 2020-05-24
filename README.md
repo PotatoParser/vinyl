@@ -4,7 +4,7 @@
 >
 > Website Link: [https://vinyl-web.com](https://vinyl-web.com)
 
-[Insert Image here]
+![Vinyl Screenshot](https://user-images.githubusercontent.com/45542237/82764648-31edaf00-9dc5-11ea-9a98-efdec5b71b9d.png)
 
 ### How does it work?
 

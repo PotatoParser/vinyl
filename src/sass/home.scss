@@ -17,13 +17,13 @@ html {
 	width: 10px;
 }
 ::-webkit-scrollbar-track {
-	background: #f1f1f1;
+	background: $popup-back-color;
 }
 ::-webkit-scrollbar-thumb {
-	background: #888;
+	background: $line-color;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: $font-color;
 }
 
 .help-container {
