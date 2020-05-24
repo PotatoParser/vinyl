@@ -40,5 +40,6 @@
   		"SALT": "@vinyl-salt",
   		"BYTE_LIMIT": "@vinyl-byte-limit",
   		"TIME_LIMIT": "@vinyl-time-limit"
-  	}
+  	},
+    "alias": ["vinyl-web.com"]
 }
