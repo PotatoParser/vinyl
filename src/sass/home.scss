@@ -1,0 +1,544 @@
+@import "utils/defaults";
+
+@mixin content-width {
+	width: 90vw;
+	max-width: 800px;
+}
+
+html {
+	position: relative;
+	min-height: 100%;
+	body {
+		margin: 0 0 40px;
+	}
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+	background: #888;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.help-container {
+	z-index: 2;    
+	position: absolute;
+	top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	height: calc(100% - 10px - 10px);
+	margin: 0 auto;
+	display: block;
+	border-radius: 10px;
+	overflow-y: auto;
+	@include simple-animation(opacity, 0, 1, 0.3s);
+	opacity: 1;
+	&[hide] {
+		pointer-events: none;
+		@include simple-animation(opacity, 1, 0, 0.3s);
+		opacity: 0;
+	}
+	&[hidden] {
+		display: none;
+		pointer-events: none;
+	}
+}
+
+.help-box {
+	padding: 25px;
+	background-color: $popup-back-color;
+	@include content-width;
+	width: 80vw;
+	border-radius: 10px;
+	margin: 0 auto;
+	.close-btn {
+		position: absolute;
+		@include font(300, 40px);
+		top: 10px;
+		right: 10px;
+		width: 40px;
+		transition: color 0.2s;
+		line-height: 0;
+		cursor: pointer;
+		&:hover {
+			color: #FF8282;
+		}
+		&:active {
+			color: #FF6B6B;
+		}    
+	}
+	h1 {
+		@include font(300, 30px);
+		border-bottom: 2px solid $line-color;
+		padding: 0 25px 10px 25px;
+		margin-top: 0;
+	}
+	h2 {
+		@include font(300, 22px);
+		text-align: left;
+	}
+	p {
+		@include font(300, 20px);
+		text-align: left;
+	}
+}
+
+.alert {
+	@include font(300, 50px, 74px);    
+	z-index: 1;
+	position: fixed;
+	top: 25px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: $popup-back-color;
+	padding: 25px 83px;
+	border-radius: 10px;
+	cursor: pointer;
+	user-select: none;
+	@include simple-animation(transform, translateX(-50%) scale(0), translateX(-50%) scale(1), 0.2s);
+	&[remove] {
+		@include simple-animation(transform, translateX(-50%) scale(1), translateX(-50%) scale(0), 0.3s);
+	}
+}
+
+.background {
+	position: fixed;
+	z-index: -1;
+	@include multi-set(0, top, left);
+	@include multi-set(100%, width, height);
+	@include background;
+}
+
+h1.title {
+	@include font(300, 60px);
+	display: flex;
+	align-items: center;
+	margin: 5px auto;
+	justify-content: center;
+	img {
+		height: 60px;
+		width: auto;
+		margin: 0 5px;
+	}
+	span {
+		margin-right: 70px;
+	}
+}
+
+h2.subtitle {
+	@include font(300, 1.5em);
+	margin: 5px auto;
+	padding: 0 20px;
+}
+
+.line {
+	margin: 0 auto;
+	border-bottom: 5px solid $line-color;
+}
+
+.btn {
+	@include font(300, 36.62px, 0);
+	opacity: 0.45;
+	cursor: pointer;
+	transition: opacity 0.2s;
+	background-color: transparent;
+	&[active], &:hover:not([invalid]) {
+		opacity: 1;
+	}
+}
+
+.type {
+	display: flex;
+	margin: 0 auto;
+	width: 142px;
+	position: relative;
+	margin-top: 20px;
+	justify-content: space-between;
+	padding-bottom: 10px;
+}
+
+.input {
+	display: flex;
+	flex-wrap: nowrap;
+	position: relative;
+	margin: 0 auto;
+	margin-top: 15px;
+	@include content-width;
+	padding-bottom: 4px;
+	border-bottom: 5px solid $line-color;
+	.download-btn, input, input::placeholder {
+		@include font(300, 28px, 49px);
+	}
+
+	.download-btn {
+		@include multi-set(0, top, right);
+		position: absolute;
+
+		&[hidden] {
+			opacity: 0;
+		}
+		&[invalid] {
+			color: red;
+			cursor: not-allowed;
+		}
+	}
+
+	input {
+		display: block;
+		width: 100%;
+		padding: 0 30px;
+		border: none;
+		outline: none;
+		background-color: transparent;
+	}
+}
+
+.advanced-wrapper {
+	margin: 0 auto;
+	@include content-width;
+	user-select: none;
+
+	.advanced-settings {
+		display: inline-block;
+		width: auto;
+		margin-left: 10px;
+		cursor: pointer;
+		user-select: none;
+
+		span {
+			@include font(300, 20px, 30px);
+		}
+
+		svg {
+			transition: transform 0.2s;
+			height: 18px;
+			width: 18px;
+		}
+	}
+
+	.reset-btn {
+		@include font(400, 20px, 30px);
+		cursor: pointer;
+		display: inline-block;
+		user-select: none;
+		max-width: 0;
+		transition: max-width 0.2s;
+		white-space: nowrap;
+		vertical-align: bottom;
+		overflow: hidden;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:active {
+			text-decoration: none;
+		}
+	}
+
+	.options {
+		max-height: 0px;
+		overflow: hidden;
+		transition: max-height 0.2s;
+
+		.selection {
+			display: flex;
+			flex-wrap: nowrap;
+			@include font(300, 20px, 32px);
+			span {
+				white-space: nowrap;
+				min-width: 130px;//150px;
+				text-align: right;
+				margin-right: 6px;
+			}
+
+			.choices {
+				font-weight: 400;
+				display: flex;
+				flex-wrap: wrap;
+				cursor: pointer;
+				user-select: none;
+
+				div {
+					padding: 0 6px;
+					opacity: 0.45;
+					transition: opacity 0.2s;
+
+					&[selected] {
+						opacity: 1;
+					}
+
+					&:not([selected]):hover {
+						opacity: 0.8;
+					}
+				}
+
+				.divider {
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	&[open] {
+		.advanced-settings {
+			svg {
+				transform: rotate(90deg);
+			}
+		}
+
+		.reset-btn {
+			max-width: 200px;
+		}
+
+		.options {
+			max-height: 250px;
+		}
+	}
+}
+
+.queue {
+	@include content-width;
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	padding: 0 10px;
+
+	.item {
+		$size: 24px;
+		flex-shrink: 0;
+		margin: 10px 0;
+		user-select: none;
+		cursor: pointer;
+		position: relative;
+		display: flex;
+		padding: 6px 0;
+		width: 360px;
+		max-width: 90vw;
+		border-radius: 4px;
+		background-color: $popup-back-color;
+		@include font(300, $size, $size + 4px);
+		text-align: center;
+		justify-content: space-between;
+		align-items: center;
+		transition: opacity 0.2s;
+		margin-bottom: 15px;
+
+		.loading {
+			$border-size: 4px;
+			$cycle-speed: 1s;
+			$transition-speed: 0.25s;
+			$remaining: $size - $border-size;
+
+			@mixin opened($size) {
+				border-width: 0;
+				@include multi-set($size, width, height);
+			}
+
+			@mixin closed($border-size, $remaining) {
+				border-width: $border-size;
+				@include multi-set($remaining, width, height);
+			}
+
+			@keyframes erase {
+				0% {
+					transform: scale(1);
+					@include closed($border-size, $remaining);
+				}
+				50% {
+					transform: scale(0);
+					@include closed($border-size, $remaining);
+				}
+				50% {
+					transform: scale(0);
+					@include opened($size);
+				}
+				100% {
+					transform: scale(1);
+				}
+			}
+
+			@keyframes reveal {
+				0% {
+					opacity: 0;
+				}
+
+				50% {
+					opacity: 0;
+				}
+
+				50% {
+					opacity: 1;
+				}
+
+				100% {
+					opacity: 1;
+				}
+			}
+			border-width: $border-size;
+			border-style: solid;
+			border-radius: 50%;
+			@include multi-set($remaining, font-size, width, height);
+			line-height: 0;
+			text-align: center;
+			padding: 0;
+			@include simple-animation(transform, rotate(0deg), rotate(360deg), $cycle-speed, 1);
+
+			.fa-times, .fa-check {
+				opacity: 0;
+				display: none;
+				font-size: $size;
+			}
+			margin: 0 10px;
+			flex-shrink: 0;
+			transition: border-color 0.2s, border-top-color 0.2s;
+			$states: (
+				"metadata": #FEDA78,
+				"download": #39ABD5,
+				"convert": #FCAB31,
+				"ffmpeg": #7FD991
+			);
+
+			@each $name, $color in $states {
+				&[state="#{$name}"] {
+					border-color: $color;
+					border-top-color: transparent;
+				}
+			}
+
+			&[state="queued"] {
+				background-image: url("/images/vinyl.png");
+				background-size: cover;
+				background-repeat: no-repeat;
+				background-position: center;
+				border-color: transparent;
+				width: $size + 4px;
+				height: $size + 4px;
+				border-width: 0;
+				@include simple-animation(transform, rotateY(0), rotateY(360deg), $transition-speed * 8, 1);
+			}
+
+			.fa-times {
+				color: #FF8282;
+			}
+
+			.fa-check {
+				color: #7FD991;
+			}
+
+			&[loaded], &[errored] {
+				animation: erase $transition-speed linear;
+				@include opened($size);
+			}
+
+			&[loaded] {
+				.fa-check {
+					display: inline-block;
+					animation: reveal ($transition-speed * 4) linear;
+					opacity: 1;
+				}
+			}
+
+			&[errored] {
+				.fa-times {
+					display: inline-block;
+					animation: reveal ($transition-speed * 4) linear;
+					opacity: 1;
+				}
+			}
+		}
+
+		.filler {
+			@include multi-set($size, width, height);
+			opacity: 0;
+			pointer-events: none;
+			margin: 0 10px;
+			flex-shrink: 0;
+		}
+
+		span {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			text-align: center;
+		}
+
+		&:hover {
+			opacity: 0.8;
+		}
+		&[remove] {
+			@include simple-animation(transform, scale(1), scale(0), 0.3s);
+		}
+
+		&:not([complete]):hover {
+			text-decoration: line-through;
+		}
+	}
+}
+
+footer {
+	position: absolute;
+	bottom: 5px;
+	left: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	@include font(400, 18px); 
+	color: $line-color;
+	.repo {
+		position: relative;
+		.stars {
+			@include font(400, 14px);
+			padding: 5px;
+			background-color: $popup-back-color;
+			color: black;
+			border-radius: 5px;
+			position: absolute;
+			right: 120%;
+			top: 0;
+			white-space: nowrap;
+			&:after {
+				content: "";
+				border-width: 8px;
+				border-style: solid;
+				border-color: transparent transparent transparent $popup-back-color;
+				height: 0;
+				width: 0;
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				left: 100%;
+			}
+		}
+	}
+	a {
+		flex-shrink: 0;
+		text-decoration: none;
+		color: $line-color;    
+		img {
+			height: 30px;
+			width: auto;
+			margin: 0 5px;
+			flex-shrink: 0;
+		}
+		span {
+			margin: 0 5px;
+			flex-shrink: 0;
+		}
+	}
+	div {
+		padding: 0 5px;  
+		cursor: pointer;
+		flex-shrink: 0;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vinyl</title>
+	<meta charset="utf-8">
+	<meta name="description" content="Ad-free, open-source YouTube downloading website using ytdl-core & FFmpeg">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2.0">	
+	<link rel="stylesheet" type="text/css" href="/styles/all.min.css">
+	<link rel="stylesheet" type="text/css" href="/styles/home.css">
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1">
+</head>
+<body>
+	<div class="background"></div>
+	<div class="help-container" hide hidden>
+		<div class="help-box">
+			<div class="close-btn"><i class="fas fa-times"></i></div>
+			<h1>Selecting between Video & Audio</h1>
+			<p>To select <b>Video</b>, click on the <i class="fas fa-video fa-fw"></i> icon.</p>
+			<p>To select <b>Audio</b>, click on the <i class="fas fa-music fa-fw"></i> icon.</p>
+			<p>Video can be canceled by hovering over the queued items and clicking.</p>
+			<h1>Advanced Settings</h1>
+			<h2>The following requires you to open the <u>Advanced Settings</u> by clicking on it.</h2>
+			<h2>Options marked with <i class="fas fa-flask"></i> are <b>experimental</b> and take up processing power.<i class="fas fa-bolt"></i></h2>
+			<p><b>Video Quality:</b> The video with the highest quality matching the selected one, will be downloaded.</p>
+			<p><b>Audio Quality <i>(kbps):</i></b> The audio with the highest bitrate matching the selected one, will be downloaded.</p>
+			<p><b>Video Format:</b> Downloads the video available in the selected format.</p>
+			<p><b>Audio Format:</b> Downloads the audio available in the selected format (Excludes mp3).</p>
+			<p><b>Convert <i>(Experimental):</i></b> When enabled, downloads closest matching video/audio to selected qualities and converts them to the selected video/audio formats.</p>
+		</div>
+	</div>
+	<div class="container">
+		<h1 class="title"><img src="/images/vinyl.png"><span>Vinyl</span></h1>
+		<div class="line" style="width: 100px;"></div>
+		<h2 class="subtitle">Ad-free, open-source YouTube downloading website using ytdl-core & FFmpeg</h2>
+		<div class="type">
+			<div class="video-btn btn"><i class="fas fa-video fa-fw"></i></div>
+			<div class="music-btn btn"><i class="fas fa-music fa-fw"></i></div>
+		</div>
+		<div class="input">
+			<div class="download-btn btn" hidden><i class="fas fa-download"></i></div>
+			<input type="text" placeholder="Link or ID">
+		</div>
+		<div class="advanced-wrapper">
+			<div class="advanced-settings">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 17 20">
+				  <g id="Polygon_1" data-name="Polygon 1" transform="translate(17) rotate(90)" fill="none">
+				    <path d="M 10 7.889238357543945 L 6.993669509887695 13 L 13.0063304901123 13 L 10 7.889238357543945 M 10 0 L 20 17 L 0 17 L 10 0 Z" stroke="none" fill="#5d5d5d"/>
+				  </g>
+				</svg>
+				<span>Advanced Settings</span>
+			</div>
+			<div class="reset-btn"> (Reset to Defaults)</div>
+			<div class="options">
+				<div class="selection video-quality">
+					<span>Video Quality:</span>
+					<div class="choices">
+						<div value="144p">144p</div>
+						<div value="240p">240p</div>
+						<div value="360p">360p</div>
+						<div value="480p">480p</div>
+						<div value="720p">720p</div>
+						<div value="1080p">1080p</div>
+					</div>
+				</div>
+				<div class="selection audio-quality">
+					<span>Audio Bitrate:</span>
+					<div class="choices">
+						<div value="24">24</div>
+						<div value="36">36</div>
+						<div value="48">48</div>
+						<div value="64">64</div>
+						<div value="96">96</div>
+						<div value="128">128</div>
+						<div value="160">160</div>
+						<div value="192">192</div>
+						<div value="256">256</div>
+					</div>
+				</div>
+				<div class="selection video-format">
+					<span>Video Format:</span>
+					<div class="choices">
+						<div value="webm">webm</div>
+						<div value="mp4">mp4</div>
+					</div>
+				</div>
+				<div class="selection audio-format">
+					<span>Audio Format:</span>
+					<div class="choices">
+						<div value="webm">weba</div>
+						<div value="mp4">m4a</div>
+						<div value="mp3">mp3<i class="fas fa-flask"></i></div>
+					</div>
+				</div>
+				<div class="selection experimental">
+					<span>Convert <i class="fas fa-flask"></i>:</span>
+					<div class="choices">
+						<div value="false">disable</div>
+						<div value="true">enable</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="queue"></div>
+		<footer>
+			<a href="https://github.com/PotatoParser/vinyl" target="_blank" class="repo">
+				<div class="stars">Star Me!</div>
+				<img src="/images/GitHub-Mark-120px-plus.png">
+			</a>
+			<a href="https://github.com/PotatoParser/vinyl/issues" target="_blank">
+				<div>Report An Issue</div>
+			</a> | <div class="help-btn">Help</div>
+		</footer>
+	</div>
+	<script src="/scripts/home.js"></script>
+</body>
+</html>

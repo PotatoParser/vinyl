@@ -1,0 +1,28 @@
+@import "utils/defaults";
+
+body {
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	@include background;
+	margin: 0;
+}
+
+div {
+	@include font(400, 60px);
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	overflow: hidden;
+	padding: 25px 83px;
+	border-radius: 10px;
+	top: 25px;
+	background-color: $popup-back-color;
+	p {
+		margin: 5px auto;
+	}
+	.code {
+		border-bottom: 4px solid $line-color;
+	}
+}

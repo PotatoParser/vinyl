@@ -1,0 +1,39 @@
+{
+	"video": {
+		"quality": "1080p",
+		"qualityList": [
+			"144p",
+			"240p",
+			"360p",
+			"480p",
+			"720p",
+			"1080p"
+		],
+		"target": "qualityLabel",
+		"format": "webm",
+		"formatList": [
+			"webm",
+			"mp4"
+		]
+	},
+	"audio": {
+		"quality": 256,
+		"qualityList": [
+			24,
+			36,
+			48,
+			64,
+			96,
+			128,
+			160,
+			192,
+			256
+		],
+		"target": "audioBitrate",
+		"format": "webm",
+		"formatList": [
+			"webm",
+			"mp4"
+		]
+	}
+}
