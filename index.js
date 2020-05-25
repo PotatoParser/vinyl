@@ -76,7 +76,7 @@ function findOptimal(info, type, quality, format, convert) {
 app.post('/download', CSRF, async (req, res) => {
 	if (req.header('Referer') !== URL) {
 		return res.status(403).json({
-			error: 'Illegal Request.'
+			error: 'Illegal Request (Incorrect Referer).'
 		});
 	}
 
@@ -110,7 +110,7 @@ app.post('/download', CSRF, async (req, res) => {
 app.post('/meta', CSRF, (req, res) => {
 	if (req.header('Referer') !== URL) {
 		return res.status(403).json({
-			error: 'Illegal Request.' + URL
+			error: 'Illegal Request (Incorrect Referer).'
 		});
 	}
 
@@ -169,7 +169,7 @@ app.post('/meta', CSRF, (req, res) => {
 
 app.use((err, req, res, next) => {
 	if (err.code !== 'EBADCSRFTOKEN') return next();
-	res.status(403).json({error: 'Unable to verify request!'});
+	res.status(403).json({error: 'Invalid CSRF Token!'});
 });
 
 function partialDownload(url, start, end) {
