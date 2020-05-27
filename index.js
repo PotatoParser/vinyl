@@ -35,10 +35,7 @@ if (!process.env.HIVE_QUEEN) {
 }
 
 app.get('/', CSRF, (req, res) => {
-	res.cookie('XSRF-TOKEN', req.csrfToken(), {
-		secure: PRODUCTION_MODE,
-		httpOnly: PRODUCTION_MODE
-	});
+	res.cookie('XSRF-TOKEN', req.csrfToken());
 	res.set('X-Frame-Options', 'DENY');
 	res.sendFile(__dirname + '/index.html');
 });
