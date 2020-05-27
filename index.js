@@ -21,10 +21,10 @@ const secure = require('./lib/encrypt');
 
 const app = express();
 const CSRF = csurf({
-	cookie: true,
-	secure: PRODUCTION_MODE,
-	httpOnly: PRODUCTION_MODE,
-	signed: true
+	cookie: {
+		secure: PRODUCTION_MODE,
+		httpOnly: PRODUCTION_MODE,
+	}
 });
 
 app.use(bodyParser.json());
@@ -36,6 +36,7 @@ if (!process.env.HIVE_QUEEN) {
 
 app.get('/', CSRF, (req, res) => {
 	res.cookie('XSRF-TOKEN', req.csrfToken());
+	res.set('X-Frame-Options', 'DENY');
 	res.sendFile(__dirname + '/index.html');
 });
 
@@ -45,7 +46,6 @@ function slice(arr, target) {
 
 function findOptimal(info, type, quality, format, convert) {
 	const remaining = slice(DEFAULTS[type].qualityList, quality);
-	console.log(ytdl.filterFormats(info.formats, `${type}only`));
 	let optimal =
 		ytdl.filterFormats(info.formats, `${type}only`)
 		.filter(i => (convert ? true : i.container === format) && remaining.includes(i[DEFAULTS[type].target]))
