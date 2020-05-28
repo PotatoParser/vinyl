@@ -76,11 +76,14 @@ function getMeta(type, link, settings) {
 					if (!type) throw {error: 'Invalid type.'}
 					let res;
 					if (process.env.HIVE_QUEEN) {
-						res = await hive.download(this[type], this[type + 'Length']);
+						res = await hive.download(this[type], this[type + 'Length'], this[type + 'Segments']);
 					} else {
-						res = await request(`/download`, {type, metadata: this[type]});
+						res = await request(`/download`, {type, metadata: this[type], segments: this[type + 'Segments']});
 						if (res.status >= 400) throw await res.json();
 						res = await res.arrayBuffer();
+					}
+					if (this[type + 'Segments']) {
+						res = repairMPD(this[type + 'Format'], res);
 					}
 					return res;
 				}
@@ -101,6 +104,7 @@ function FFmpeg(type, args, files) {
 		onExit: code => {
 			if (code) {
 				console.error(output);
+				if (output.includes('abort(OOM)')) throw new Error('Out of Memory! Please disable convert.');
 				throw new Error('FFmpeg Error!');
 			}
 		}
@@ -134,6 +138,21 @@ function addMeta(outputFormat, title, files) {
 		]),
 		files
 	);
+}
+
+function repairMPD(inputFormat, data) {
+	return trimArray(FFmpeg(inputFormat,
+		[
+			`-i`, `temp.${inputFormat}`,
+			'-c:v', 'copy',
+			'-c:a', 'copy',
+			`out.${inputFormat}`
+		],
+		[{
+			data: data,
+			name: `temp.${inputFormat}`
+		}]
+	));
 }
 
 function convertMp3(inputFormat, audio, bitrate) {

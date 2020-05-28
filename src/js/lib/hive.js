@@ -2,15 +2,11 @@
 
 const HIVE_QUEEN = process.env.HIVE_QUEEN;
 
-function partialDownload(url, payload, start, end, retries = 2) {
+function feed(url, body, retries = 2) {
 	return new Promise((resolve, reject)=>{
 		fetch(`${url}/feed`, {
 			method: 'POST',
-			body: JSON.stringify({
-				payload: payload,
-				start: start,
-				end: end
-			}),
+			body: JSON.stringify(body),
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -18,7 +14,7 @@ function partialDownload(url, payload, start, end, retries = 2) {
 		.then(res => {
 			if (res.status >= 400) {
 				if (retries > 0) {
-					return partialDownload(url, payload, start, end, --retries)
+					return feed(url, body, --retries)
 					.then(data => {
 						resolve(data);
 					})
@@ -53,19 +49,36 @@ function getList(max) {
 	});
 }
 
-async function fetchSingle(url, length) {
+async function download(url, length, segments) {
 	const MAX = 34;
-	length = Number(length);
-	let div = Math.trunc(length / MAX);
 	let requests = [];
-	let reqList = await getList(MAX);
-	let i;
-	for (i = 0; i < MAX - 1; ++i) {
-		requests.push(partialDownload(reqList[i], url, i*div, (i+1)*div-1));
+	let reqList = await getList(segments ? segments.length : MAX);
+	if (segments) {
+		let index = 0;
+		segments.forEach(segment => {
+			requests.push(feed(reqList[index++], {
+				payload: url,
+				segment: segment
+			}));
+		});
+	} else {
+		length = Number(length);
+		let div = Math.trunc(length / MAX);		
+		let i;
+		for (i = 0; i < MAX - 1; ++i) {
+			requests.push(feed(reqList[i], {
+				payload: url,
+				start: i*div,
+				end: (i+1)*div-1
+			}));
+		}
+		requests.push(feed(reqList[i], {
+			payload: url,
+			start: i*div,
+			end: length
+		}));
 	}
-	requests.push(partialDownload(reqList[i], url, i*div, length));
 	let final = await Promise.all(requests);
-	final = final.flat();
 	let arrSize = 0;
 	final.forEach(item => {
 		arrSize += item.length;
@@ -79,4 +92,4 @@ async function fetchSingle(url, length) {
 	return merged;
 }
 
-module.exports.download = fetchSingle;
+module.exports.download = download;

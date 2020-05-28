@@ -15,6 +15,7 @@ const request = require('request');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const csurf = require('csurf');
+const formats = require('ytdl-core/lib/formats');
 
 // Import external dependencies
 const secure = require('./lib/encrypt');
@@ -49,12 +50,8 @@ function findOptimal(info, type, quality, format, convert) {
 	let optimal =
 		ytdl.filterFormats(info.formats, `${type}only`)
 		.filter(i => (convert ? true : i.container === format) && remaining.includes(i[DEFAULTS[type].target]))
-		.filter(b => {
-			if (format !== 'mp4' || type === 'audio') return b;
-			//av01 is unknown
-			if (b.mimeType.includes('avc1')) return b;
-		})
-		.sort((a, b) => b.bitrate - a.bitrate)[0];
+		.filter(b => !b.mimeType.includes('av01'))
+		.sort((a, b) => type === 'video' ? b.bitrate - a.bitrate : b.audioBitrate - a.audioBitrate)[0];
 	if (!optimal) {
 		throw 'There are no sources available with those settings!';
 	}
@@ -69,7 +66,8 @@ function findOptimal(info, type, quality, format, convert) {
 			url: optimal.url,
 			contentLength: optimal.contentLength
 		})),
-		length: optimal.contentLength
+		length: optimal.contentLength,
+		segments: optimal.segments
 	}
 }
 
@@ -80,7 +78,7 @@ app.post('/download', CSRF, async (req, res) => {
 		});
 	}
 
-	const {type, metadata} = req.body;
+	const {type, metadata, segments} = req.body;
 	const response = {error: null};
 	const Err = (code, str) => {
 		response.error = str;
@@ -94,6 +92,11 @@ app.post('/download', CSRF, async (req, res) => {
 	}
 	try {
 		const {url, contentLength} = JSON.parse(await secure.decrypt(metadata));
+		if (segments) {
+			return rapidSegmentDownload(url, segments).then(buffer => {
+				res.status(302).send(buffer);
+			});
+		}
 		if (RAPID_FORKS === 1) {
 			request(url).pipe(res.status(302));
 		} else {
@@ -142,6 +145,14 @@ app.post('/meta', CSRF, (req, res) => {
 			return Err('Unable to find video.');
 		}
 		response.title = info.title;
+		let manifests = new Set(info.formats.filter(i => i.url.indexOf('https://manifest') === 0).map(i => i.url));
+		if (manifests.size > 0) {
+			let addedFormats = [];
+			for (let manifest of manifests.entries()) {
+				addedFormats.push(await parseManifest(manifest[0]));
+			}
+			info.formats = info.formats.filter(i => i.url.indexOf('https://manifest') !== 0).concat(addedFormats.flat());
+		}
 		let seconds = Number(info.length_seconds);
 		if (seconds > TIME_LIMIT) {
 			return Err('Video is too long! Choose a different video.');
@@ -153,12 +164,14 @@ app.post('/meta', CSRF, (req, res) => {
 				response.videoQuality = optimal.quality;				
 				response.videoFormat = optimal.format;
 				response.videoLength = optimal.length;
+				response.videoSegments = optimal.segments;
 			}
 			const optimal = findOptimal(info, 'audio', audioQuality, audioFormat, convert);
 			response.audio = await optimal.source;
 			response.audioQuality = optimal.quality;
 			response.audioFormat = optimal.format;
 			response.audioLength = optimal.length;
+			response.audioSegments = optimal.segments;
 			res.status(302).json(response);
 		} catch (e) {
 			console.log(e);
@@ -174,20 +187,15 @@ app.use((err, req, res, next) => {
 
 function partialDownload(url, start, end) {
 	return new Promise(resolve => {
-		let file = [];
-		let stream = request.get({
+		request({
 			url: url,
 			headers: {		
 				range: `bytes=${start}-${end}`
-			}
-		}, async (err, res, body)=>{
+			},
+			encoding: null
+		}, async (err, res, body) => {
 			if (err) resolve(await partialDownload(url, start, end));
-		})
-		.on('data', d=>{
-			file.push(d);
-		})
-		.on('end', d=>{
-			resolve(file);
+			else resolve(res.body);
 		});
 	});
 }
@@ -204,6 +212,44 @@ async function rapidDownload(url, length) {
 	requests.push(partialDownload(url, i*div, length));
 	let final = await Promise.all(requests);
 	return Buffer.concat(final.flat());
+}
+
+function downloadSegment(url) {
+	return new Promise(resolve => {
+		request({
+			url,
+			encoding: null
+		}, async (err, req, body) => {
+			if (err) return resolve(await downloadSegment(url));
+			resolve(req.body);
+		});
+	});
+}
+
+async function rapidSegmentDownload(baseURL, segments) {
+	let requests = [];
+	segments.forEach(seg => {
+		requests.push(downloadSegment(`${baseURL}${seg}`));
+	});
+	let final = await Promise.all(requests);
+	return Buffer.concat(final);
+}
+
+function parseManifest(url) {
+	return new Promise((resolve, reject) => {
+		request(url, (err, res, body) => {
+			if (err) reject(err);
+			else resolve(Array.from(res.body.match(/(?<=<Representation).*?(?=\/Representation>)/g)).map(i => {
+				let format = Object.assign({
+					segments: Array.from(i.match(/<SegmentList>.*?<\/SegmentList>/g)[0].match(/(?<=(sourceURL|media)=\").*?(?=\")/g)),
+					url: i.match(/(?<=\<BaseURL\>).*?(?=\<\/BaseURL\>)/g)[0],
+				}, formats[i.match(/(?<=id=").*?(?=")/g)[0]]);
+				format.container = format.mimeType.match(/(?<=\/).*?(?=;)/g)[0];
+				format.raw = i;
+				return format;
+			}));
+		});
+	});
 }
 
 app.listen(PORT, () => {
