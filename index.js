@@ -43,7 +43,7 @@ app.get('/', CSRF, (req, res) => {
 		'Pragma': 'no-cache',
 		'Expires': '0'
 	});
-	res.sendFile(__dirname + '/index.html');
+	res.status(302).sendFile(__dirname + '/index.html');
 });
 
 function slice(arr, target) {
