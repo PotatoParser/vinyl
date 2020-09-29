@@ -37,7 +37,12 @@ if (!process.env.HIVE_QUEEN) {
 
 app.get('/', CSRF, (req, res) => {
 	res.cookie('XSRF-TOKEN', req.csrfToken());
-	res.set('X-Frame-Options', 'DENY');
+	res.set({
+		'X-Frame-Options': 'DENY',
+		'Cache-Control': 'no-cache, no-store, must-revalidate',
+		'Pragma': 'no-cache',
+		'Expires': '0'
+	});
 	res.sendFile(__dirname + '/index.html');
 });
 
