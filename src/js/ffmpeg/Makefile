@@ -1,6 +1,7 @@
 # Compile FFmpeg and all its dependencies to JavaScript.
 # You need emsdk environment installed and activated, see:
 # <https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html>.
+
 COMMON_BSFS = vp9_superframe
 PRE_JS = build/pre.js
 POST_JS_SYNC = build/post-sync.js
@@ -8,7 +9,7 @@ POST_JS_WORKER = build/post-worker.js
 
 COMMON_FILTERS = aresample scale crop overlay hstack vstack
 COMMON_DEMUXERS = matroska ogg mov mp3 wav image2 concat
-COMMON_DECODERS = vp8 h264 vorbis opus mp3 aac pcm_s16le mjpeg png
+COMMON_DECODERS = vp9 vp8 h264 vorbis opus mp3 aac pcm_s16le mjpeg png
 
 WEBM_MUXERS = webm ogg null
 WEBM_ENCODERS = libvpx_vp8 libopus
@@ -112,8 +113,6 @@ build/lame/dist/lib/libmp3lame.so:
 
 build/x264/dist/lib/libx264.so:
 	cd build/x264 && \
-	git reset --hard && \
-	patch -p1 < ../x264-fix-configure.patch && \
 	emconfigure ./configure \
 		--prefix="$$(pwd)/dist" \
 		--extra-cflags="-Wno-unknown-warning-option" \
@@ -245,9 +244,9 @@ ffmpeg-worker-webm.js: $(FFMPEG_WEBM_BC) $(PRE_JS) $(POST_JS_WORKER)
 ffmpeg-mp4.js: $(FFMPEG_MP4_BC) $(PRE_JS) $(POST_JS_SYNC)
 	emcc $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) \
 		--post-js $(POST_JS_SYNC) \
-		$(EMCC_COMMON_ARGS)
+		$(EMCC_COMMON_ARGS) -O2
 
 ffmpeg-worker-mp4.js: $(FFMPEG_MP4_BC) $(PRE_JS) $(POST_JS_WORKER)
 	emcc $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) \
 		--post-js $(POST_JS_WORKER) \
-		$(EMCC_COMMON_ARGS)
+		$(EMCC_COMMON_ARGS) -O2
