@@ -147,6 +147,7 @@ app.post('/meta', CSRF, (req, res) => {
 	}
 	ytdl.getInfo(link, async (err, info) => {
 		if (err) {
+			console.log(err);
 			return Err('Unable to find video.');
 		}
 		response.title = info.title;
