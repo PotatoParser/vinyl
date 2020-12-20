@@ -54,7 +54,7 @@
 
 `HIVE_QUEEN`: [**[Current Website Only](https://vinyl-web.com)**] A reference to the **hive queen** link. Part of the hive network (exclusive to Vercel deployment)
 
-### Hive Network
+### Hive Network [DEPRECATED]
 
 > Developed to supercharge Vinyl on Vercel.
 
