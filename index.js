@@ -145,12 +145,11 @@ app.post('/meta', CSRF, (req, res) => {
 	if (!DEFAULTS.audio.qualityList.includes(audioQuality) || !DEFAULTS.audio.formatList.includes(audioFormat)) {
 		return Err('Invalid audio arguments.');
 	}
-	ytdl.getInfo(link, async (err, info) => {
-		if (err) {
-			console.log(err);
-			return Err('Unable to find video.');
-		}
-		response.title = info.title;
+
+	ytdl.getInfo(link)
+	.then(async info => {
+		console.log(info);
+		response.title = info.player_response.videoDetails.title;
 		let manifests = new Set(info.formats.filter(i => i.url.indexOf('https://manifest') === 0).map(i => i.url));
 		if (manifests.size > 0) {
 			let addedFormats = [];
@@ -178,10 +177,16 @@ app.post('/meta', CSRF, (req, res) => {
 			response.audioFormat = optimal.format;
 			response.audioLength = optimal.length;
 			response.audioSegments = optimal.segments;
+			console.log(response);
 			res.status(302).json(response);
 		} catch (e) {
 			console.log(e);
 			Err(e.message || e);
+		}
+	}).catch(err => {
+		if (err) {
+			console.log(err);
+			return Err('Unable to find video.');
 		}
 	});
 });
