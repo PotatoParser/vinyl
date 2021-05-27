@@ -288,7 +288,7 @@ downloadBtn.addEventListener('click', download);
 
 function validate(link) {
 	link = link.trim();
-	if (!(/^(https?:\/\/(youtu\.be\/|(www\.)?youtube\.com\/watch\?v=))?[A-Za-z0-9_-]{11}(?=$|&)/g).test(link)) {
+	if (!(/^(https?:\/\/(youtu\.be\/|(www\.)?youtube\.com\/watch\?v=))?[A-Za-z0-9_-]{11}(?=$|&)/g).test(link) && !/&list=[\w-]+$/g.test(link)) {
 		downloadBtn.setAttribute('invalid', '');
 	} else {
 		downloadBtn.removeAttribute('invalid');
