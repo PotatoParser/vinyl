@@ -9,6 +9,22 @@ const resetBtn = document.querySelector('.reset-btn');
 const XSRF = (new Map(document.cookie.split(';').map(pair => pair.trim().split('=')))).get('XSRF-TOKEN');
 const helpBtn = document.querySelector('.help-btn');
 
+function request(uri, body) {
+	return new Promise((resolve, reject) => {
+		fetch(uri, {
+			method: 'POST',
+			referrerPolicy: 'origin',
+			body: JSON.stringify(body),
+			headers: {
+				'CSRF-TOKEN': XSRF,
+				'Content-Type': 'application/json'
+			},
+			credentials: 'same-origin'
+		}).then(res => resolve(res))
+		.catch(err => reject(err));
+	});
+}
+
 function selector(target) {
 	return (proxy, key) => {
 		const element = document.querySelector(target);
@@ -255,6 +271,16 @@ async function download() {
 	input.value = '';
 	downloadBtn.setAttribute('hidden', '');
 	input.focus();
+	if (/&list=[\w-]+$/g.test(value)) {
+		try {
+			let {error, urls} = await request('/playlist', {playlist: value}).then(res => res.json());
+			if (error) return jsAlert('Playlist does not exist!');
+			urls.forEach(Queue.add);
+			return;
+		} catch(e) {
+			return jsAlert('Error fetching playlist!');
+		}
+	}
 	Queue.add(value);
 }
 

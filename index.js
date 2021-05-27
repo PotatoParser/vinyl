@@ -11,6 +11,7 @@ const RAPID_FORKS = Number(process.env.RAPID_FORKS || 1);
 // Import dependencies
 const express = require('express');
 const ytdl = require('ytdl-core');
+const ytpl = require('ytpl');
 const request = require('request');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -75,6 +76,27 @@ function findOptimal(info, type, quality, format, convert) {
 		segments: optimal.segments
 	}
 }
+
+app.post('/playlist', CSRF, async (req, res) => {
+	if (req.header('Referer') !== URL) {
+		return res.status(403).json({
+			error: 'Illegal Request (Incorrect Referer).'
+		});
+	}
+	const {playlist} = req.body;
+	const response = {error: null};
+	const Err = (code, str) => {
+		response.error = str;
+		res.status(code).json(response);
+	}
+	try {
+		response.urls = await ytpl(playlist, {limit: Infinity, pages: Infinity}).then(data => data.items.map(i => i.shortUrl));
+		res.status(302).json(response);
+	} catch(e) {
+		console.log(e);
+		Err(403, 'Unable to fetch playlist.');
+	}
+});
 
 app.post('/download', CSRF, async (req, res) => {
 	if (req.header('Referer') !== URL) {
