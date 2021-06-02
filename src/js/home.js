@@ -131,11 +131,15 @@ const Queue = (function(){
 					item[data.item](data.value);
 					break;
 				case "complete":
-					save(URL.createObjectURL(data.blob), data.filename)();
+					worker.terminate();
+					const url = URL.createObjectURL(data.blob);
+					save(url, data.filename)();
+					setTimeout(() => URL.revokeObjectURL(url), 30 * 1000);
 					item.loaded();
 					finished();
 					break;
 				case "error":
+					worker.terminate();
 					e = data.error;
 					if (!e.error) console.error(e);
 					item.text(e.title || 'Metadata Unavailable.');
@@ -148,6 +152,7 @@ const Queue = (function(){
 			}
 		}
 		worker.onerror = err => {
+			worker.terminate();
 			const msg = 'Unable to load ffmpeg.';
 			item.text(msg);
 			jsAlert(msg);
