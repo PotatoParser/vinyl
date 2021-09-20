@@ -38,7 +38,6 @@
   		}
   	},
   	"env": {
-  		"URL": "@source-url",
   		"KEY": "@vinyl-key",
   		"IV": "@vinyl-iv",
   		"SALT": "@vinyl-salt",
