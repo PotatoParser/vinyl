@@ -1,6 +1,0 @@
-node_modules
-public/scripts
-public/styles/*
-!public/styles/all.min.css
-.env
-.vercel
